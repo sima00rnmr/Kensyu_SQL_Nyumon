@@ -137,13 +137,12 @@ FROM 廃止口座
 WHERE 解約時残高 > 0
 ORDER BY 1 
 
-
-
-
-
-
-
-
+SELECT 口座番号,名義,'〇' AS 口座区分
+FROM 口座
+UNION
+SELECT 口座番号,名義,'×' AS 口座区分
+FROM 廃止口座
+ORDER BY 2 
 
 
 

@@ -13,3 +13,4 @@
 29,UNION　&　ORDER　時
 30,　EXCEPT文（EXSEPTのミス）
 31,↑復習しよう…
+33,
