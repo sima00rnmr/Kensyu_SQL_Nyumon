@@ -238,4 +238,22 @@ SUBSTRING(CAST(更新日 AS VARCHAR),9,2)||
 FROM 口座
 WHERE 更新日 >= '2024-01-01'
 
+SELECT 
+COALESCE (CAST(更新日 AS VARCHAR) , '設定なし')
+AS 更新日
+FROM 口座
+
+SELECT SUM(残高),MAX(残高),
+MIN(残高),AVG(残高),COUNT(残高)
+FROM 口座
+
+SELECT COUNT(*) AS 件数
+FROM 口座
+WHERE 種別 <> '1' 
+AND 残高 >= 1000000 
+AND 更新日 < '2024-01-01'
+
+SELECT COUNT(*)-COUNT(更新日) AS 件数
+FROM 口座
+
 
