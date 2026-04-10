@@ -256,4 +256,57 @@ AND 更新日 < '2024-01-01'
 SELECT COUNT(*)-COUNT(更新日) AS 件数
 FROM 口座
 
+SELECT MAX(名義),MIN(名義) FROM 口座
 
+SELECT MAX(更新日) AS 新しい日付,
+MIN(更新日)AS 古い日付
+FROM 口座
+
+SELECT 種別,SUM(残高) AS 合計,MAX(残高) AS 最大,
+MIN(残高) AS 最小,AVG(残高) AS 平均 
+,COUNT(口座番号) AS 件数
+FROM 口座
+GROUP BY 種別
+
+SELECT SUBSTRING(口座番号,7,1) 
+AS 口座番号下1桁,
+COUNT(口座番号) AS 件数
+FROM 口座
+GROUP BY SUBSTRING(口座番号,7,1)
+ORDER BY 件数 DESC
+
+SELECT SUBSTRING(COALESCE(CAST(更新日 AS VARCHAR),'XXXX'),1,4),
+SUM(残高)AS 合計,
+MAX (残高)AS 最大,
+MIN (残高)AS 最小,
+AVG (残高) AS 平均,
+COUNT (口座番号) AS 登録件数
+FROM 口座
+GROUP BY SUBSTRING(COALESCE(CAST(更新日 AS VARCHAR),'XXXX'),1,4)
+ORDER BY COUNT (口座番号) DESC
+
+SELECT 種別,SUM(残高),COUNT(*)　
+FROM 口座
+GROUP BY 種別
+HAVING SUM(残高) > 3000000
+
+SELECT SUBSTRING(名義,1,1) AS 名義,COUNT(名義) AS 件数,
+AVG(LENGTH(REPLACE(名義,'　',''))) AS 文字数の平均
+FROM 口座
+GROUP BY SUBSTRING(名義,1,1)
+HAVING AVG(LENGTH(REPLACE(名義,'　',''))) >= 5 
+OR COUNT(名義)>=10
+
+SELECT 残高,
+(SELECT SUM(入金額) FROM 取引 
+WHERE 日付 = '2023-12-28' AND 口座番号 = '1115600') AS 入金額,
+(SELECT SUM(出金額) FROM 取引 
+WHERE 日付 = '2023-12-28' AND 口座番号 = '1115600') AS 出金額
+FROM 口座
+WHERE 更新日 = '2023-12-28' AND 口座番号 = '1115600'
+
+SELECT 口座番号,名義,残高
+FROM 口座
+WHERE 口座番号 IN (SELECT 口座番号
+FROM 取引 
+WHERE 入金額>1000000 OR 出金額>1000000)
