@@ -310,6 +310,18 @@ WHERE 日付 = '2023-12-28' AND 口座番号 = '1115600') AS 出金額
 FROM 口座
 WHERE 更新日 = '2023-12-28' AND 口座番号 = '1115600'
 
+※60のおまけ…JOIN使った文（問題文では　副問い合わせでSELECT使えと記載があるので今回は不適）
+SELECT k.残高,
+COALESCE(SUM(t.入金額),0) AS 入金額合計,
+COALESCE(SUM(t.出金額),0) AS 出金額合計
+FROM 口座 k
+LEFT JOIN 取引 t
+ON k.口座番号 = t.口座番号
+AND t.日付 = '2023-12-28'
+WHERE k.口座番号 = '1115600'
+GROUP BY k.残高
+ 
+
 SELECT 口座番号,名義,残高
 FROM 口座
 WHERE 口座番号 IN (SELECT 口座番号
@@ -318,3 +330,34 @@ WHERE 入金額>1000000 OR 出金額>1000000)
 
 SELECT * FROM 口座
 WHERE 更新日 > ALL(SELECT 日付 FROM 取引)
+
+SELECT K.口座番号,K.名義,K.残高,T.日付,T.入金額,T.出金額
+FROM 口座 AS K
+JOIN 取引 AS T
+ON K.口座番号=T.口座番号
+WHERE K.口座番号 = '0887132'
+ORDER BY T.取引番号 
+
+※※※　確認
+自分の回答
+SELECT T.口座番号,K.名義,K.残高
+FROM 口座 AS K
+JOIN 取引 AS T
+ON K.口座番号=T.口座番号
+WHERE T.日付 = '2022-03-01'
+EXCEPT 
+SELECT 口座番号,名義,解約時残高 FROM 廃止口座
+
+模範解答（これだと除外してなくない…？）
+SELECT T.口座番号,K.名義,K.残高 
+FROM 取引 AS T 
+JOIN 口座 AS K
+ON T.口座番号 = K.口座番号
+WHERE T.日付 ='2022-03-01'
+→自分の日本語理解の問題かもしれない…解決
+
+
+
+
+
+
