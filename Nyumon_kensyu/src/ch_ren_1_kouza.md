@@ -364,3 +364,45 @@ JOIN 口座 AS K
 ON T.口座番号 = K.口座番号
 WHERE T.日付 = '2022-03-01'
 
+SELECT T.取引番号,
+CAST(Y.取引事由id AS VARCHAR) || ':' || Y.取引事由名 AS 取引事由,
+T.日付,T.口座番号,T.入金額,T.出金額
+FROM 取引 AS T
+RIGHT JOIN 取引事由 AS Y
+ON T.取引事由id = Y.取引事由id
+
+SELECT DISTINCT COALESCE(T.取引事由id,Y.取引事由id),Y.取引事由名
+FROM 取引 AS T 
+FULL JOIN 取引事由 AS Y 
+ON T.取引事由id = Y.取引事由id
+
+71 70を抜かしてる、このあとやる
+SELECT K.口座番号,K.名義,K.残高,T.日付,Y.取引事由名,T.入金額,T.出金額
+FROM 口座 AS K
+JOIN 取引 AS T
+ON K.口座番号=T.口座番号
+JOIN 取引事由 AS Y
+ON T.取引事由id = Y.取引事由id
+WHERE K.口座番号 = '0887132'
+ORDER BY T.取引番号
+
+SELECT K.口座番号,K.名義,K.残高,
+T.日付 AS 取引の日付,T.取引事由id,T.入金額,T.出金額
+FROM 口座 AS K
+JOIN 取引 AS T
+ON K.口座番号 = T.口座番号 
+WHERE K.残高 > 5000000 
+AND T.日付 >= '2024-01-01' 
+AND (T.入金額 > 1000000 OR T.出金額 > 1000000)
+
+（口座テーブルを副問い合わせにした）
+SELECT K.口座番号,K.名義,K.残高,
+T.日付 AS 取引の日付,T.取引事由id,T.入金額,T.出金額
+FROM 取引 AS T
+JOIN (SELECT 口座番号,名義,残高 
+FROM 口座
+WHERE 残高 >= 5000000) AS K
+ON T.口座番号 = K.口座番号 
+WHERE T.日付 >= '2024-01-01' 
+AND (T.入金額 > 1000000 OR T.出金額 > 1000000)
+
