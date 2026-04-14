@@ -406,3 +406,30 @@ ON T.口座番号 = K.口座番号
 WHERE T.日付 >= '2024-01-01' 
 AND (T.入金額 > 1000000 OR T.出金額 > 1000000)
 
+74 じぶんの回答
+SELECT K.口座番号,T.回数,K.名義
+FROM 口座 AS K
+JOIN (SELECT 口座番号,COUNT(*) AS 回数 FROM 取引 
+GROUP BY 口座番号,日付) T
+ON K.口座番号 = T.口座番号
+WHERE T.回数 >= 3
+
+模範解答は
+SELECT K.口座番号,T.回数,K.名義
+FROM 口座 AS K
+JOIN (SELECT 口座番号,
+COUNT(*) AS 回数 FROM 取引 
+GROUP BY 口座番号,日付 
+HAVING T.回数 >= 3) T
+ON K.口座番号 = T.口座番号
+
+自己結合を用いた方法
+SELECT K.名義,K.口座番号,K.種別,K.残高,K.更新日
+FROM 口座 AS K
+JOIN (SELECT 名義,COUNT(名義) AS 重複した名義 FROM 口座 GROUP BY 名義) C
+ON K.名義 = C.名義
+WHERE C.重複した名義 >= 2
+ORDER BY K.名義 DESC, K.口座番号
+
+ーーーーーーーーーーーーーーーーーーーーーーーーーー
+
