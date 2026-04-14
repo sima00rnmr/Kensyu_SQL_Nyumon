@@ -432,4 +432,178 @@ WHERE C.重複した名義 >= 2
 ORDER BY K.名義 DESC, K.口座番号
 
 ーーーーーーーーーーーーーーーーーーーーーーーーーー
+SELECT 商品コード,商品名,単価,
+商品区分,関連商品コード
+FROM 商品
+
+SELECT 商品名
+FROM 商品
+
+SELECT *
+FROM 商品
+
+SELECT 注文番号,注文枝番,商品コード
+FROM 注文
+
+INSERT INTO 商品(商品コード,商品名,単価,商品区分)
+VALUES ('W0461','冬のあったかコート',12800,'1');
+
+INSERT INTO 商品(商品コード,商品名,単価,商品区分)
+VALUES ('S0331','春のさわやかコート',6800,'1');
+
+INSERT INTO 商品(商品コード,商品名,単価,商品区分)
+VALUES ('A0582','秋のシックなコート',9800,'1');
+
+SELECT * FROM 商品
+WHERE 商品コード = 'W1252'
+
+UPDATE 商品
+SET 単価 = 500
+WHERE 商品コード = 'S0023'
+
+SELECT * FROM 商品
+WHERE 単価 <= 1000
+
+SELECT * FROM 商品
+WHERE 単価 >= 5000
+
+SELECT * FROM 注文
+WHERE 注文日 >= '2024-01-01'
+
+SELECT * FROM 注文
+WHERE 注文日 < '2023-12-01'
+
+SELECT * FROM 商品
+WHERE 商品区分 <> '1'
+
+SELECT *
+FROM 注文
+WHERE クーポン割引料 IS NULL
+
+DELETE 
+FROM 商品
+WHERE 商品コード LIKE 'N%'
+
+SELECT 商品コード,商品名,単価 
+FROM 商品
+WHERE 商品名 LIKE '%コート%'
+
+SELECT 商品コード,商品区分
+FROM 商品
+WHERE 商品区分 IN('2','3','9')
+
+SELECT *
+FROM 商品
+WHERE 商品コード BETWEEN 'A0100' AND 'A0500'
+
+SELECT * 
+FROM 注文
+WHERE 商品コード IN('N0501','N1021','N0223')
+
+SELECT * 
+FROM 商品
+WHERE 商品区分 = '3' AND 商品名 LIKE '%水玉%'
+
+SELECT *
+FROM 商品
+WHERE 商品名 LIKE '%ゆるふわ%' 
+OR 商品名 LIKE '%軽い%'
+
+SELECT 
+FROM 商品
+WHERE (商品区分 = '1' AND 単価 <= 3000)
+OR (商品区分 = '3' AND 単価 >= 10000)
+
+SELECT 商品コード 
+FROM 注文
+WHERE '024-04-01' 
+AND 数量 >= 3
+
+SELECT *
+FROM 注文
+WHERE 数量 >=10 
+OR クーポン割引料 IS NOT NULL
+
+SELECT 商品コード,商品名
+FROM 商品
+WHERE 商品区分 = '1'
+ORDER BY 商品コード DESC
+
+SELECT 注文日,注文番号,注文枝番,商品コード,数量
+FROM 注文
+WHERE 注文日 >= '2024-03-01'
+ORDER BY 注文日,注文番号,注文枝番
+
+SELECT DISTINCT 商品コード 
+FROM 注文
+ORDER BY 商品コード
+
+SELECT DISTINCT 商品コード 
+FROM 注文
+ORDER BY 商品コード
+
+SELECT *
+FROM 商品
+ORDER BY 単価 
+OFFSET 5 ROWS
+FETCH NEXT 15 ROWS ONLY
+
+SELECT *
+FROM 廃番商品
+WHERE 売上個数 >= 100
+UNION
+SELECT *
+FROM 廃番商品
+WHERE 廃番日 >= '2022-12-01' 
+AND 廃番日 < '2023-01-01'
+ORDER BY 売上個数 DESC
+
+(自分のコード
+UNIONを使わない
+SELECT * 
+FROM 廃番商品 
+WHERE 売上個数 >= 100 
+OR (廃番日 >= '2022-12-01' AND 廃番日 < '2023-01-01') 
+ORDER BY 売上個数 DESC
+…ダメかなあ？)
+
+SELECT 商品コード
+FROM 商品
+EXCEPT
+SELECT 商品コード
+FROM 注文
+ORDER BY 1
+
+SELECT 商品コード
+FROM 商品
+INTERSECT
+SELECT 商品コード
+FROM 注文
+ORDER BY 1 DESC
+
+SELECT 商品コード,商品名,単価
+FROM 商品
+WHERE 商品区分= '9' 
+AND 単価 >=10000
+UNION
+SELECT 商品コード,商品名,単価
+FROM 商品
+WHERE 商品区分= '9'
+AND 単価 <= 1000
+ORDER BY 3,1
+
+SELECT 商品コード,単価,単価*0.95 AS キャンペーン価格
+FROM 商品
+WHERE 商品区分 = '9'
+ORDER BY 商品コード
+
+UPDATE 注文
+SET クーポン割引料 = クーポン割引料 + 300
+WHERE 注文日 >= '2024-03-12' 
+AND 注文日 < '2024-03-15' 
+AND クーポン割引料 IS NOT NULL
+AND 数量 >= 2
+
+
+
 
