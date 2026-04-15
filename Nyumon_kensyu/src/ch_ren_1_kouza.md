@@ -664,7 +664,47 @@ FROM 注文
 WHERE 注文番号 >= '202310010001'
 AND 注文番号 <= '202310319999'
 ーーーーーーーーーーーーーーー
+38
+SELECT DISTINCT 商品区分 AS 区分,CASE 
+WHEN 商品区分 = '1' THEN '衣類'
+WHEN 商品区分 = '2' THEN '靴'
+WHEN 商品区分 = '3' THEN '雑貨'
+WHEN 商品区分 = '9' THEN '未分類'
+END AS 区分名
+FROM 商品
 
+39
+SELECT 商品コード,商品名,単価,CASE 
+WHEN 単価 < 3000 THEN 'S'
+WHEN 単価 >= 3000 AND 単価 < 10000 THEN 'M'
+WHEN 単価 >= 10000 THEN 'L'
+END AS 販売価格ランク,
+商品区分 ||':'||  CASE
+WHEN 商品区分 ='1'THEN '衣類'
+WHEN 商品区分 ='2'THEN '靴'
+WHEN 商品区分 ='3'THEN '雑貨'
+WHEN 商品区分 ='9'THEN '未分類'
+END AS 商品区分
+FROM 商品
+ORDER BY 単価,商品コード
 
+SELECT 商品名,LENGTH (商品名) AS 文字数
+FROM 商品
+WHERE LENGTH (商品名) >= 10 
+ORDER BY LENGTH (商品名)
+
+SELECT 注文日,SUBSTRING(注文番号,9,4) AS 注文番号
+FROM 注文
+
+42
+自分の回答（全部置換になるからダメ）
+UPDATE 商品
+SET 商品コード = REPLACE(商品コード,'M','E')
+WHERE 商品コード LIKE 'M%'
+
+模範解答
+UPDATE 商品 SET 商品コード = 'E' || 
+SUBSTRING(商品コード,2,4)
+WHERE SUBSTRING(商品コード,1,1) ='M'
 
 
