@@ -331,7 +331,34 @@ WHERE 入金額>1000000)
 SELECT * FROM 口座
 WHERE 更新日 > ALL(SELECT 日付 FROM 取引)
 
-SELECT K.口座番号,K.名義,K.残高,T.日付,T.入金額,T.出金額
+63-
+SELECT A.日付,
+(SELECT MAX (入金額) FROM 取引 
+WHERE 口座番号 = '3104451') AS 最大入金額,
+(SELECT MAX (出金額) FROM 取引 
+WHERE 口座番号 = '3104451') AS 最大出金額
+FROM (SELECT 日付 FROM 取引 WHERE 口座番号 = '3104451'
+
+64
+INSERT INTO 廃止口座
+SELECT * FROM 口座 WHERE 口座番号 = '2761055';
+DELETE FROM 口座
+WHERE 口座番号 = '2761055'
+
+65
+SELECT T.口座番号,T.日付,Y.取引事由名,
+COALESCE(T.入金額,0)-COALESCE(T.出金額,0) AS 取引金額
+FROM 取引事由 AS Y
+JOIN 取引 AS T
+ON Y.取引事由id = T.取引事由id
+WHERE T.口座番号 IN('0311240','1234161','2750902')
+ORDER BY T.口座番号,T.取引番号
+
+GROUP BY 日付
+HAVING SUM(入金額) >0 AND SUM(出金額) >0) AS A
+
+66
+LECT K.口座番号,K.名義,K.残高,T.日付,T.入金額,T.出金額
 FROM 口座 AS K
 JOIN 取引 AS T
 ON K.口座番号=T.口座番号
@@ -395,6 +422,7 @@ WHERE K.残高 > 5000000
 AND T.日付 >= '2024-01-01' 
 AND (T.入金額 > 1000000 OR T.出金額 > 1000000)
 
+73 ２つのやり方で
 （口座テーブルを副問い合わせにした）
 SELECT K.口座番号,K.名義,K.残高,
 T.日付 AS 取引の日付,T.取引事由id,T.入金額,T.出金額
@@ -405,6 +433,17 @@ WHERE 残高 >= 5000000) AS K
 ON T.口座番号 = K.口座番号 
 WHERE T.日付 >= '2024-01-01' 
 AND (T.入金額 > 1000000 OR T.出金額 > 1000000)
+
+（取引テーブルを副問い合わせにした）
+SELECT K.口座番号,K.名義,K.残高,T.日付 AS 取引の日付,
+T.取引事由id,T.入金額,T.出金額
+FROM 口座 AS K
+JOIN (SELECT 口座番号,日付,取引事由id,入金額,出金額 FROM 取引
+WHERE 日付 >= '2024-01-01' 
+AND (入金額 >= 1000000 OR 出金額 >= 1000000))AS T
+ON K.口座番号= T.口座番号
+WHERE K.残高 >= 5000000
+
 
 74 じぶんの回答
 SELECT K.口座番号,T.回数,K.名義
