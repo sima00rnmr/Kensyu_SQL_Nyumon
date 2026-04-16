@@ -11,20 +11,20 @@
 ×〇〇22,　LIKEの応用（名前と番号）
 △〇〇25, 　（SELECT文から重複行を削除する）　DISTINCT
 26,表示は成功しているが　並び替えは列番号で指定、を忘れていたため 04/08→ok
-××△〇27,OFFSET ~ ROWS EFTCH NEXT  ONLY 文、ORDER BYの位置　スペルok　ORDERの位置(4/13)
+××△〇〇27,OFFSET ~ ROWS EFTCH NEXT  ONLY 文、ORDER BYの位置　スペルok　ORDERの位置(4/13)
 △△〇〇〇　28,↑の復習用に
 29,UNION　&　ORDER　時　04/08→ok,
-△〇30,　EXCEPT文（EXSEPTのミス）　04/08→ok,
-××〇〇31,↑復習しよう…　スペル忘れ＞P122
+△〇×30,　EXCEPT文（EXSEPTのミス）　04/08→ok,
+××〇〇×31,↑復習しよう…　スペル忘れ＞P122
 ×〇〇33,
 ------------------
 　
-△△〇34, ROUNDとTRUNC…じゃなかった。/1000の問題
+△△〇〇34, ROUNDとTRUNC…じゃなかった。/1000の問題
 35,演算子はINSERTの中には入れられないよ！
 36,　構文はokだけど　百分率…
 37,　不等号の使い方
-×〇38,　SELECT文での項目に追加をする場合
-△〇40,　BETWEENのケアレスミス（今度は使わないやり方でもやってみて）
+×〇〇38,　SELECT文での項目に追加をする場合
+△〇〇40,　BETWEENのケアレスミス（今度は使わないやり方でもやってみて）
 〇41,　CASTとLENGTHとREPLACE
 〇42, SUBSTRING　の使い方（LIKEとの組み合わせ）
 ×△43,　全体やり直し！！！！！！！！！
@@ -98,5 +98,13 @@ OFFSET (n-1)…FETCH(l-n+1)
 67,やり直し
 68,UNIONを使わずにやってみる
 
-
-
+69-70 一旦放置
+69の進捗コード(途中)
+SELECT 
+(SELECT T.商品コード AS 商品コード,S.商品名 AS 商品名,
+S.単価 AS 単価,T.数量 AS 数量
+FROM 商品 AS S
+JOIN 注文 AS T
+ON S.商品コード = T.商品コード
+WHERE S.商品コード LIKE 'B%')
+ーーーーーーーーーーーーーーーーーーーーーー
