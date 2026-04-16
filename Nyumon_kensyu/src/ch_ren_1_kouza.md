@@ -707,4 +707,87 @@ UPDATE 商品 SET 商品コード = 'E' ||
 SUBSTRING(商品コード,2,4)
 WHERE SUBSTRING(商品コード,1,1) ='M'
 
+SELECT SUBSTRING(注文番号,9,4)
+FROM 注文 
+WHERE SUBSTRING(注文番号,9,4) >= '1000'
+AND SUBSTRING(注文番号,9,4) < '2000'
+ORDER BY SUBSTRING(注文番号,9,4)
+
+UPDATE 廃番商品
+SET 廃番日 = CURRENT_DATE
+WHERE 商品コード = 'S1990'
+
+SELECT TRUNC(単価*0.7,0) AS 値下げした単価,
+商品コード,商品,単価 AS 現在の単価
+FROM 商品
+WHERE 単価 > 10000
+
+SELECT SUM(数量) AS 数量の合計
+FROM 注文
+
+SELECT 注文日,SUM(数量) AS 数量の合計
+FROM 注文
+GROUP BY 注文日
+ORDER BY 注文日
+
+SELECT 商品区分,MAX(単価) AS 最高額,
+MIN(単価) AS 最小額
+FROM 商品
+GROUP BY 商品区分
+ORDER BY 商品区分
+
+SELECT 商品コード,SUM(数量) AS 販売した数量
+FROM 注文
+GROUP BY 商品コード
+ORDER BY 販売した数量 DESC,商品コード
+OFFSET 0 ROW 
+FETCH NEXT 10 ROWS ONLY
+
+SELECT 商品コード,SUM(数量) AS 販売した数量
+FROM 注文
+GROUP BY 商品コード
+HAVING SUM(数量) < 5 
+
+52 COALESCEは今回不要らしい
+SELECT COUNT(クーポン割引料) AS 注文件数,
+SUM(COALESCE(クーポン割引料,0)) AS 割引額の合計
+FROM 注文
+
+SELECT SUBSTRING(CAST(注文番号 AS VARCHAR),1,6) AS 年月,
+COUNT(*) AS 注文件数
+FROM 注文
+WHERE 注文枝番 = 1
+GROUP BY SUBSTRING(CAST(注文番号 AS VARCHAR),1,6)
+
+SELECT 商品コード
+FROM 注文
+WHERE 商品コード LIKE 'Z%' 
+GROUP BY 商品コード
+HAVING SUM(数量) >= 100
+
+UPDATE 注文
+SET 商品コード = (SELECT 商品コード FROM 商品
+WHERE 商品区分 = '2' AND 商品名 LIKE '%ブーツ%'
+AND 商品名 LIKE '%雨%' AND 商品名 LIKE '%安心%')
+WHERE 注文日='2024-03-15' 
+AND 注文番号='202403150014' AND 注文枝番='1'
+
+SELECT 商品コード,注文日 AS 売れた日付
+FROM 注文
+WHERE 商品コード IN(SELECT 商品コード FROM 商品 
+WHERE 商品名 LIKE '%あったか%')
+ORDER BY 注文日
+
+SELECT 商品コード,SUM(数量) AS 商品合計
+FROM 注文
+GROUP BY 商品コード
+HAVING  SUM(数量) > ALL(SELECT AVG(数量) FROM 注文 GROUP BY 商品コード) 
+
+SELECT SUM(数量) AS 割引による販売数 ,
+TRUNC(AVG(クーポン割引料),0) AS 平均割引額
+FROM (SELECT * FROM 注文 
+WHERE 商品コード = 'W0746' 
+AND クーポン割引料 IS NOT NULL)
+
+
 
