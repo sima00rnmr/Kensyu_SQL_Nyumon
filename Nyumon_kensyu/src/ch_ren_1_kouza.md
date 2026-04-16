@@ -790,4 +790,100 @@ WHERE 商品コード = 'W0746'
 AND クーポン割引料 IS NOT NULL)
 
 
+60 INSERT INTO 注文
+VALUES('2024-03-21','202403210080',
+(SELECT MAX(注文枝番)+1 FROM 注文
+WHERE 注文番号 = '202403210080'),
+'S1003','1',NULL);
+INSERT INTO 注文
+VALUES('2024-03-22','202403220901',
+(SELECT MAX(注文枝番)+1 FROM 注文
+WHERE 注文番号 = '202403220901'),
+'A0052','2',500);
 
+模範解答
+INSERT INTO 注文
+VALUES('2024-03-21','202403210080',
+(SELECT MAX(注文枝番)+1 FROM 注文
+WHERE 注文番号 = '202403210080' AND 注文日 = '2024-01-21'),
+'S1003','1',NULL)
+GROUP BY 注文日,注文番号;
+
+SELECT C.注文番号,C.注文枝番,C.商品コード,S.商品名,C.数量
+FROM 注文 AS C
+JOIN 商品 AS S
+ON C.商品コード = S.商品コード
+WHERE C.注文番号 = '202401130115'
+ORDER BY C.注文番号,C.注文枝番
+
+SELECT C.注文日,C.注文番号,C.注文枝番,
+C.数量,H.単価 * C.数量 AS 注文金額
+FROM 注文 AS C
+JOIN 廃番商品 AS H
+ON C.商品コード = H.商品コード
+WHERE C.商品コード = 'A0009' 
+AND C.注文日 >= H.廃番日
+
+SELECT S.商品コード,S.商品名,S.単価,
+C.注文日,C.注文番号,C.数量, 
+S.単価*C.数量 AS 売上金額
+FROM 商品 AS S
+JOIN 注文 AS C
+ON S.商品コード = C.商品コード
+WHERE S.商品コード ='S0604'
+ORDER BY C.注文番号
+
+SELECT C.商品コード,S.商品名
+FROM 商品 AS S
+JOIN 注文 AS C
+ON S.商品コード = C.商品コード
+WHERE C.注文日 >= '2022-08-01' 
+AND C.注文日 < '2022-09-01'
+
+SELECT C.商品コード,COALESCE(S.商品名,'廃番') AS 商品名
+FROM 商品 AS S
+RIGHT JOIN 注文 AS C
+ON S.商品コード = C.商品コード
+WHERE C.注文日 >= '2022-08-01' 
+AND C.注文日 < '2022-09-01'
+
+SELECT C.注文日,S.商品コード || ':' || S.商品名 AS 商品,
+COALESCE(C.数量,0) AS 数量
+FROM 商品 AS S
+LEFT JOIN 注文 AS C
+ON S.商品コード = C.商品コード
+WHERE S.商品区分 ='3'
+
+SELECT C.注文日,S.商品コード || ':'|| S.商品名 AS 商品,
+COALESCE(C.数量,0) AS 数量
+FROM 注文 AS C
+RIGHT JOIN (SELECT 商品コード,商品名,商品区分 FROM 商品 
+UNION 
+SELECT 商品コード,'廃番済み' AS 商品名,商品区分 FROM 廃番商品) AS S
+ON S.商品コード = C.商品コード
+WHERE S.商品区分 ='3'
+
+68,
+自分の回答
+SELECT C.注文日,C.注文番号,C.注文枝番,C.商品コード,
+S.商品名,S.単価,C.数量,
+(S.単価-COALESCE(クーポン割引料,0))*C.数量 
+AS 注文金額
+FROM (SELECT 商品コード,商品名,単価 FROM 商品
+UNION
+SELECT 商品コード,商品名,単価 FROM 廃番商品) AS S
+JOIN 注文 AS C
+ON S.商品コード =C.商品コード
+WHERE C.注文番号 = '202304030010';
+
+模範解答
+SELECT C.注文日,C.注文番号,C.注文枝番,C.商品コード,
+COALESCE(S.商品名,H.商品名),COALESCE(S.単価,H.単価),C.数量,
+(COALESCE(S.単価,H.単価)-COALESCE(クーポン割引料,0))*C.数量 
+AS 注文金額
+FROM 注文 AS C
+LEFT JOIN 商品 AS S
+ON S.商品コード =C.商品コード
+LEFT JOIN 廃番商品 AS H
+ON C.商品コード =H.商品コード
+WHERE C.注文番号 = '202304030010';
