@@ -302,6 +302,12 @@ GROUP BY SUBSTRING(名義,1,1)
 HAVING AVG(LENGTH(REPLACE(名義,'　',''))) >= 5 
 OR COUNT(名義)>=10
 
+UPDATE 口座
+SET 残高 = (SELECT SUM(COALESCE(入金額,0)) - SUM(COALESCE(出金額,0)) FROM 取引 
+WHERE 口座番号 ='0351333' AND 更新日 = '2024-01-11'),
+更新日='2024-01-11'
+WHERE 口座番号 ='0351333'
+
 SELECT 残高,
 (SELECT SUM(入金額) FROM 取引 
 WHERE 日付 = '2023-12-28' AND 口座番号 = '1115600') AS 入金額,
@@ -338,6 +344,8 @@ WHERE 口座番号 = '3104451') AS 最大入金額,
 (SELECT MAX (出金額) FROM 取引 
 WHERE 口座番号 = '3104451') AS 最大出金額
 FROM (SELECT 日付 FROM 取引 WHERE 口座番号 = '3104451'
+GROUP BY 日付
+HAVING SUM(入金額) >0 AND SUM(出金額) >0
 
 64
 INSERT INTO 廃止口座
