@@ -922,3 +922,37 @@ GROUP BY 商品コード) AS T
 ON S.商品コード = T.商品コード
 WHERE S.商品コード LIKE 'B%'
 ORDER BY S.商品コード
+ーーーーーーーーーーーーーーーーーー
+
+SELECT id,名称,職業コード,hp,mp,状態コード
+FROM パーティー
+
+SELECT 名称 AS なまえ,hp AS 現在のHP,mp AS 現在のMP 
+FROM パーティー
+
+SELECT *
+FROM イベント
+
+SELECT イベント番号 AS 番号,イベント名称 AS 場面
+FROM イベント
+
+INSERT INTO パーティー
+VALUES('A01','スガワラ','21',131,232,'03');
+
+SELECT * FROM パーティー
+WHERE id = 'C02'
+
+UPDATE パーティー
+SET hp = 120
+WHERE id = 'A01'
+
+SELECT id,名称,hp
+FROM パーティー
+WHERE hp < 100
+
+SELECT id,名称,hp
+FROM パーティー
+WHERE hp < 100
+ 9番まで
+
+
