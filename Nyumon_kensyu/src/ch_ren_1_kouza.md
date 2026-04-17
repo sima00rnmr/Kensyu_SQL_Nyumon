@@ -898,3 +898,27 @@ WHERE C.注文番号 = '202304030010';
 
 
 69-70 一旦放置
+
+69
+×　自分の回答（一旦ね）
+SELECT S.商品コード,S.商品名,S.単価,
+SUM(COALESCE(T.数量,0)) AS 売り上げた個数,
+S.単価*SUM(COALESCE(T.数量,0)) AS 総売上金額
+FROM 商品 AS S
+LEFT JOIN 注文 AS T
+ON S.商品コード = T.商品コード
+WHERE SUBSTRING(S.商品コード,1,1) LIKE 'B%'
+GROUP BY S.商品コード
+ORDER BY S.商品コード
+
+69模範
+SELECT S.商品コード,S.商品名,S.単価,
+COALESCE(T.数量, 0) AS 売上数量,
+S.単価 * COALESCE(T.数量, 0) AS 総売上金額
+FROM 商品 AS S
+LEFT JOIN (SELECT 商品コード,SUM(数量) AS 数量
+FROM 注文 WHERE 商品コード LIKE 'B%'
+GROUP BY 商品コード) AS T
+ON S.商品コード = T.商品コード
+WHERE S.商品コード LIKE 'B%'
+ORDER BY S.商品コード
