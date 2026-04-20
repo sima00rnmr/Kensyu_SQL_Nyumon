@@ -1121,3 +1121,116 @@ ORDER BY リスク値 DESC ,hp
 SELECT COALESCE(CAST(前提イベント番号 AS VARCHAR),'前提なし') AS 前提イベント番号,
 イベント番号,COALESCE(CAST(後続イベント番号 AS VARCHAR),'後続なし') AS 後続イベント番号
 FROM イベント
+
+SELECT MAX(hp)AS hpの最大値,MIN(hp)AS hpの最小値,AVG(hp)AS hpの平均値,
+MAX(mp) AS mpの最大値,MIN(mp) AS mpの最小値,AVG(mp) AS mpの平均値
+FROM パーティー
+
+SELECT CASE
+WHEN タイプ = '1' THEN '強制'
+WHEN タイプ = '2' THEN 'フリー'
+WHEN タイプ = '3' THEN '特殊'
+END AS タイプ,COUNT(タイプ) AS イベントの数
+FROM イベント
+GROUP BY タイプ
+
+SELECT クリア結果,COUNT(クリア結果)
+FROM 経験イベント
+WHERE クリア区分 = '1'
+GROUP BY クリア結果
+ORDER BY クリア結果
+
+SELECT CASE 
+WHEN SUM(mp) < 500  THEN '敵はみとれている'
+WHEN SUM(mp) < 1000  THEN '敵は呆然としている'
+WHEN SUM(mp) >= 1000  THEN '敵はひれ伏している'
+END AS 小さな奇跡
+FROM パーティー
+
+SELECT CASE
+WHEN クリア区分 = '1' THEN 'クリアした'
+WHEN クリア区分 = '0' THEN '参加したがクリアしていない'
+END AS 区分,COUNT(クリア区分) AS イベント数
+FROM 経験イベント
+GROUP BY クリア区分
+
+SELECT SUBSTRING(CAST(職業コード AS VARCHAR),1,1) AS 職業タイプ,
+MAX(hp)最大,MIN(hp)最小,AVG(hp)平均値,
+MAX(mp)最大,MIN(mp)最小,AVG(mp)平均値
+FROM パーティー
+GROUP BY SUBSTRING(CAST(職業コード AS VARCHAR),1,1)
+
+SELECT SUBSTRING(id,1,1) AS IDによる分類, 
+AVG(hp) AS HPの平均,AVG(mp) AS MPの平均
+FROM パーティー
+GROUP BY SUBSTRING(id,1,1) 
+HAVING AVG(hp) >= 100
+
+SELECT SUM(CASE
+WHEN hp < 100 THEN 1
+WHEN hp >= 100 AND hp < 150 THEN 2
+WHEN hp >= 150 AND hp < 200 THEN 3
+WHEN hp >= 200 THEN 5 END )
+AS 開けることのできる扉の合計数
+FROM パーティー
+
+ SELECT 名称 AS なまえ,hp AS 現在のHP,
+ROUND(CAST(hp AS NUMERIC)/(SELECT SUM(hp) FROM パーティー)*100,1) 
+||'%' AS パーティーでの割合
+FROM パーティー
+WHERE 職業コード = '01'
+
+UPDATE パーティー
+SET mp = mp + ROUND((SELECT SUM(mp)*0.1 
+FROM パーティー WHERE 職業コード <> '20'),0)
+WHERE 職業コード = '20'
+
+55,模範解答
+SELECT イベント番号,クリア結果
+FROM 経験イベント
+WHERE イベント番号 IN(SELECT イベント番号
+FROM イベント 
+WHERE タイプ IN('1','3')) AND クリア区分 = '1' 
+
+55,自分の回答
+SELECT イベント番号,クリア結果
+FROM 経験イベント
+WHERE イベント番号 IN(SELECT イベント番号
+FROM イベント WHERE タイプ = '1' OR タイプ = '3') AND クリア区分 = '1' 
+
+特に問題はないけど、タイプが複数ある場合はINを使った方がスッキリとして分かりやすいかも。
+
+SELECT 名称 AS なまえ,mp
+FROM パーティー
+WHERE mp = (SELECT MAX(mp) FROM パーティー)
+
+SELECT イベント番号,イベント名称
+FROM イベント
+WHERE イベント番号  NOT IN(SELECT イベント番号 FROM 経験イベント) 
+ORDER BY イベント番号
+
+58,自分の回答
+SELECT COUNT(イベント番号)
+FROM イベント
+WHERE イベント番号 NOT IN(SELECT イベント番号 FROM 経験イベント) 
+
+58,模範解答
+SELECT COUNT(イベント番号)
+FROM (SELECT イベント番号 FROM イベント 
+EXCEPT SELECT イベント番号 FROM 経験イベント ) AS SUB
+
+SELECT イベント番号,イベント名称
+FROM イベント
+WHERE イベント番号 < (SELECT イベント番号 FROM 経験イベント WHERE ルート番号 = 5)
+
+SELECT イベント番号,イベント名称,前提イベント番号
+FROM イベント
+WHERE 前提イベント番号 = ANY(SELECT イベント番号 FROM 経験イベント WHERE クリア区分 = '1')
+
+UPDATE 経験イベント
+SET クリア区分 = '1',クリア結果 = 'B',ルート番号 = (SELECT MAX(ルート番号) + 1 FROM 経験イベント)
+WHERE イベント番号 = 9 ;
+
+61 
+INSERT INTO 経験イベント
+VALUES ((SELECT 後続イベント番号 FROM イベント WHERE イベント番号 = 9),0,NULL,NULL);
