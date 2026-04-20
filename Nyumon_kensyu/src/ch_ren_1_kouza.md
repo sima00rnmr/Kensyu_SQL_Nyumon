@@ -119,7 +119,7 @@ SELECT 口座番号
 FROM 口座
 EXCEPT
 SELECT 口座番号
-FROM 廃止口座
+FROM 廃止口座SE
 ORDER BY 1 DESC
 
 SELECT 口座番号
@@ -938,6 +938,10 @@ FROM イベント
 
 INSERT INTO パーティー
 VALUES('A01','スガワラ','21',131,232,'03');
+INSERT INTO パーティー
+VALUES('A02','オーエ','10',156,84,'00');
+INSERT INTO パーティー
+VALUES('A03','イズミ','20',84,190,'00');
 
 SELECT * FROM パーティー
 WHERE id = 'C02'
@@ -955,4 +959,141 @@ FROM パーティー
 WHERE hp < 100
  9番まで
 
+SELECT イベント番号,イベント名称,タイプ FROM イベント
+WHERE タイプ <> '3'
+
+SELECT イベント番号,イベント名称 FROM イベント
+WHERE イベント番号 <= 5
+
+SELECT イベント番号,イベント名称 FROM イベント
+WHERE イベント番号 >= 20
+
+SELECT イベント番号,イベント名称 FROM イベント
+WHERE 前提イベント番号 IS NULL
+
+SELECT イベント番号,イベント名称,後続イベント番号 FROM イベント
+WHERE 後続イベント番号 IS NOT NULL
+
+UPDATE パーティー
+SET 状態コード = '01'
+WHERE 名称 LIKE '%ミ%'
+
+SELECT id,名称,hp 
+FROM パーティー
+WHERE hp BETWEEN 120 AND 160
+
+SELECT 名称,職業コード FROM パーティー
+WHERE 職業コード IN('01','10','11')
+
+SELECT 名称,状態コード FROM パーティー
+WHERE 状態コード NOT IN('00','09')
+
+SELECT * FROM パーティー
+WHERE hp >= 100 AND mp >= 100
+
+SELECT * FROM パーティー
+WHERE id LIKE 'A%' AND 職業コード LIKE '2%'
+
+SELECT * FROM イベント
+WHERE タイプ = '1' 
+AND 前提イベント番号 IS NOT NULL 
+AND 後続イベント番号 IS NOT NULL
+
+SELECT DISTINCT 状態コード
+FROM パーティー
+
+SELECT id,名称 FROM パーティー
+ORDER BY id
+
+SELECT 名称,hp,状態コード FROM パーティー
+ORDER BY 状態コード,hp DESC
+
+SELECT * FROM パーティー
+ORDER BY hp DESC
+OFFSET 0 ROWS
+FETCH NEXT 3 ROWS ONLY
+
+SELECT * FROM パーティー
+ORDER BY mp DESC
+OFFSET 2 ROWS
+FETCH NEXT 3 ROWS ONLY
+
+SELECT イベント番号 FROM イベント
+EXCEPT
+SELECT イベント番号 FROM 経験イベント
+ORDER BY 1 
+
+SELECT イベント番号 FROM イベント
+WHERE タイプ = '2'
+INTERSECT
+SELECT イベント番号 FROM 経験イベント
+WHERE クリア区分 = '1'
+
+SELECT CASE
+WHEN 職業コード LIKE '1%' THEN 'S'
+WHEN 職業コード LIKE '2%' THEN 'M'
+ELSE 'A'
+END AS 職業区分,
+職業コード,id,名称 FROM パーティー
+ORDER BY 職業コード
+
+SELECT 名称 AS 名前,
+hp AS 現在のHP,hp + 50 AS 装備後のHP 
+FROM パーティー
+WHERE 職業コード IN('11','21')
+
+UPDATE パーティー
+SET mp = mp +20
+WHERE id IN('A01','A03')
+
+SELECT 名称 AS なまえ,
+hp AS 現在のHP,
+hp * 2 AS 予想されるダメージ
+FROM パーティー
+WHERE 職業コード = '11'
+
+SELECT 名称 AS なまえ,hp || '/' || mp AS HPとMP,CASE 
+WHEN 状態コード = '01'THEN '眠り'
+WHEN 状態コード = '02'THEN '毒'
+WHEN 状態コード = '03'THEN '沈黙'
+WHEN 状態コード = '04'THEN '混乱'
+WHEN 状態コード = '05'THEN '気絶'
+WHEN 状態コード = '05'THEN NULL
+END AS ステータス
+FROM パーティー
+
+37,△自分の回答
+SELECT イベント番号,イベント名称,CASE
+WHEN タイプ = '1' THEN '強制'
+WHEN タイプ = '2' THEN 'フリー'
+WHEN タイプ = '3' THEN '特殊'
+END AS タイプ, 
+CASE WHEN イベント番号 BETWEEN 1 AND 10 THEN '序盤'
+WHEN イベント番号 BETWEEN 11 AND 17 THEN '中盤'
+ELSE '終盤' END AS 発生時期
+FROM イベント
+
+37,模範解答
+SELECT イベント番号,イベント名称,CASE
+WHEN タイプ = '1' THEN '強制'
+WHEN タイプ = '2' THEN 'フリー'
+WHEN タイプ = '3' THEN '特殊'
+END AS タイプ, 
+CASE WHEN イベント番号 <= 10 THEN '序盤'
+WHEN イベント番号 <= 17 THEN '中盤'
+ELSE '終盤' END AS 発生時期
+FROM イベント
+
+SELECT 名称 AS なまえ,hp AS 現在のHP,
+LENGTH(名称) * 10 AS 予想ダメージ
+FROM パーティー
+
+演算子を用いた場合
+UPDATE パーティー
+SET 状態コード = '04'
+WHERE hp % 4 = 0  OR mp % 4 = 0
+関数を用いた場合
+UPDATE パーティー
+SET 状態コード = '04'
+WHERE MOD(hp,4) = 0  OR MOD(mp,4) = 0
 
