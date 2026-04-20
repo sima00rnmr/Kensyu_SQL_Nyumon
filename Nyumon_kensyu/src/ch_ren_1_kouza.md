@@ -1234,3 +1234,51 @@ WHERE イベント番号 = 9 ;
 61 
 INSERT INTO 経験イベント
 VALUES ((SELECT 後続イベント番号 FROM イベント WHERE イベント番号 = 9),0,NULL,NULL);
+
+SELECT K.ルート番号,K.イベント番号,I.イベント名称,K.クリア結果
+FROM 経験イベント AS K
+JOIN イベント AS I
+ON K.イベント番号 = I.イベント番号
+WHERE K.クリア区分 = '1'
+ORDER BY K.ルート番号
+
+SELECT I.イベント番号,I.イベント名称,K.クリア区分 
+FROM 経験イベント AS K
+JOIN イベント AS I
+ON K.イベント番号 = I.イベント番号
+WHERE I.タイプ = '1'
+
+
+SELECT I.イベント番号,I.イベント名称,COALESCE(K.クリア区分,'未クリア') AS クリア区分
+FROM 経験イベント AS K
+JOIN イベント AS I
+ON K.イベント番号 = I.イベント番号
+WHERE I.タイプ = '1'
+
+65,
+SELECT P.ID,P.名称 AS なまえ,
+S.コード名称 AS 職業 , Z.コード名称 AS 状態
+FROM パーティー AS P
+JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 1) AS S
+ON P.職業コード = S.コード値
+JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 2) AS Z
+ON P.状態コード = Z.コード値
+ORDER BY ID
+
+SELECT P.ID,COALESCE(P.名称,'仲間になっていない！') AS なまえ,S.コード名称 AS 職業 
+FROM パーティー AS P
+RIGHT JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 1) AS S
+ON P.職業コード = S.コード値
+
+SELECT K.イベント番号,K.クリア区分,C.コード値 || ':' || C.コード名称 AS クリア結果
+FROM 経験イベント AS K
+FULL JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 4) AS C
+ON K.クリア結果 = C.コード値
+
+68, まだ途中
+SELECT I.イベント番号,I.イベント名称,I.前提イベント番号,SELECT(Z.イベント番号)
+FROM イベント I
+JOIN (SELECT イベント番号 FROM イベント WHERE 前提イベント IS NOT NULL) Z
+ON I.イベント番号 = Z.イベント番号
+WHERE I.前提イベント IS NOT NULL
+（一回時間を置く）
