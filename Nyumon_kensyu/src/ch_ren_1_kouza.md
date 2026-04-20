@@ -1097,3 +1097,27 @@ UPDATE パーティー
 SET 状態コード = '04'
 WHERE MOD(hp,4) = 0  OR MOD(mp,4) = 0
 
+SELECT TRUNC(777*0.7,0) AS 支払った金額 
+
+UPDATE パーティー
+SET hp = ROUND(hp * 1.3,0),
+mp = ROUND(mp * 1.3 ,0)
+
+SELECT 名称 AS なまえ,hp,
+POWER(hp,0) AS 攻撃1回目,
+POWER(hp,1) AS 攻撃2回目,
+POWER(hp,2) AS 攻撃3回目
+FROM パーティー
+WHERE 職業コード = '10'
+
+SELECT 名称 AS なまえ,hp,状態コード,CASE
+WHEN hp <= 50 THEN 3 + CAST(状態コード AS INTEGER)
+WHEN hp <= 100 THEN 2 + CAST(状態コード AS INTEGER)
+WHEN hp <= 150 THEN 1 + CAST(状態コード AS INTEGER)
+ELSE 0 + CAST(状態コード AS INTEGER) END AS リスク値
+FROM パーティー
+ORDER BY リスク値 DESC ,hp
+
+SELECT COALESCE(CAST(前提イベント番号 AS VARCHAR),'前提なし') AS 前提イベント番号,
+イベント番号,COALESCE(CAST(後続イベント番号 AS VARCHAR),'後続なし') AS 後続イベント番号
+FROM イベント
