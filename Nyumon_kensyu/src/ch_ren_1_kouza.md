@@ -1275,10 +1275,21 @@ FROM 経験イベント AS K
 FULL JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 4) AS C
 ON K.クリア結果 = C.コード値
 
-68, まだ途中
-SELECT I.イベント番号,I.イベント名称,I.前提イベント番号,SELECT(Z.イベント番号)
+68, やり直し
+
+SELECT I.イベント番号,I.イベント名称,I.前提イベント番号,Z.前提イベント名称,I.後続イベント番号,K.後続イベント名称
 FROM イベント I
-JOIN (SELECT イベント番号 FROM イベント WHERE 前提イベント IS NOT NULL) Z
-ON I.イベント番号 = Z.イベント番号
-WHERE I.前提イベント IS NOT NULL
-（一回時間を置く）
+LEFT JOIN イベント Z
+ON I.イベント番号 = Z.前提イベント番号
+LEFT JOIN イベントK
+ON I.イベント番号 = K.後続イベント番号
+WHERE I.前提イベント番号 IS NOT NULL OR I.後続イベント番号 IS NOT NULL
+
+70,SELECT I.イベント番号,I.イベント名称,Z.前提イベント数
+FROM (SELECT 前提イベント番号,COUNT(前提イベント番号) AS 前提イベント数 
+FROM イベント WHERE 前提イベント IS NOT NULL  GROUP BY 前提イベント番号) AS Z
+LEFT JOIN イベント I
+ON Z.前提イベント番号 = I.イベント番号
+WHERE Z.前提イベント数 > 0
+ORDER BY I.イベント番号
+
