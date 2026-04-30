@@ -897,8 +897,6 @@ ON C.商品コード =H.商品コード
 WHERE C.注文番号 = '202304030010';
 
 
-69-70 一旦放置
-
 69
 ×　自分の回答（一旦ね）
 SELECT S.商品コード,S.商品名,S.単価,
@@ -922,6 +920,19 @@ GROUP BY 商品コード) AS T
 ON S.商品コード = T.商品コード
 WHERE S.商品コード LIKE 'B%'
 ORDER BY S.商品コード
+
+70.自分の回答
+SELECT S.商品コード,S.商品名,K.関連商品コード,
+(SELECT 商品名 FROM 商品 WHERE 商品コード IN(K.関連商品コード))AS 関連商品名
+FROM 商品 AS S
+JOIN (SELECT 関連商品コード FROM 商品 WHERE 関連商品コード IS NOT NULL) AS K
+ON S.商品コード = K.関連商品コード
+
+70.模範回答
+SELECT S2.商品コード,S2.商品名,S2.関連商品コード,S1.商品名 AS 関連商品名
+FROM 商品 AS S2
+JOIN 商品 AS S1
+ON S2.関連商品コード = S1.商品コード;
 ーーーーーーーーーーーーーーーーーー
 
 SELECT id,名称,職業コード,hp,mp,状態コード
