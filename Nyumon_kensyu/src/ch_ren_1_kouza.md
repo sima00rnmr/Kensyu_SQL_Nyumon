@@ -1129,6 +1129,17 @@ ELSE 0 + CAST(状態コード AS INTEGER) END AS リスク値
 FROM パーティー
 ORDER BY リスク値 DESC ,hp
 
+43、自分の回答（これ、何も問題起きなかったけどダメなのかな？）
+SELECT 名称 AS なまえ,hp,状態コード,
+CAST(状態コード AS INTEGER) + CASE 
+WHEN hp <= 50 THEN 3 
+WHEN hp <= 100 THEN 2
+WHEN hp <= 150 THEN 1
+ELSE 0
+END AS リスク値
+FROM パーティー
+ORDER BY リスク値 DESC,hp
+
 SELECT COALESCE(CAST(前提イベント番号 AS VARCHAR),'前提なし') AS 前提イベント番号,
 イベント番号,COALESCE(CAST(後続イベント番号 AS VARCHAR),'後続なし') AS 後続イベント番号
 FROM イベント
@@ -1286,7 +1297,13 @@ FROM 経験イベント AS K
 FULL JOIN (SELECT コード値,コード名称 FROM コード WHERE コード種別 = 4) AS C
 ON K.クリア結果 = C.コード値
 
-68, やり直し
+68,
+SELECT I.イベント番号,I.イベント名称,
+I.前提イベント番号, Z.イベント名称 AS 前提イベント名称
+FROM イベント AS I
+JOIN イベント AS Z
+ON I.イベント番号 = Z.前提イベント番号
+WHERE I.前提イベント番号 IS NOT NULL
 
 SELECT I.イベント番号,I.イベント名称,I.前提イベント番号,Z.前提イベント名称,I.後続イベント番号,K.後続イベント名称
 FROM イベント I
